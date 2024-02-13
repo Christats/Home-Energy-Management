@@ -1,0 +1,48 @@
+const int LDRPin = A0;    // LDR analog pin
+const int LED1Pin = 11;   // LED 1 digital pin
+const int trigPin = 9;    // Ultrasonic sensor trig pin
+const int echoPin = 10;   // Ultrasonic sensor echo pin
+
+void setup() {
+  pinMode(LED1Pin, OUTPUT);
+  pinMode(trigPin, OUTPUT); // Set ultrasonic sensor trigger pin as output
+  pinMode(echoPin, INPUT);  // Set ultrasonic sensor echo pin as input
+
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Read the LDR value
+  int sensorValue = analogRead(LDRPin);
+  
+  // Read the ultrasonic sensor distance
+  long duration, distance;
+  digitalWrite(trigPin, LOW);
+   delayMicroseconds(1);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(1);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+
+  Serial.print("LDR Value: ");
+  Serial.println(sensorValue);
+  Serial.print("Distance: ");
+  Serial.println(distance);
+
+  // Check if the conditions for LED glow are met
+  if (sensorValue > 50 && distance > 10) {
+    analogWrite(LED1Pin, 0); // Adjust LED 1 brightness
+    int brightness = map(sensorValue, 0, 50, 30, 255);
+    
+// If conditions met, turn on the LED with low brightness
+
+  } else {
+    int brightness = map(sensorValue, 51, 70, 0, 3); // Map the LDR value to LED brightness
+    analogWrite(LED1Pin, brightness); 
+    // If conditions not met, turn off the LED
+   
+  }
+
+  delay(1000); // Delay for stability
+}
